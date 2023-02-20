@@ -1,0 +1,378 @@
+<HTML>
+<HEAD>
+<TITLE>SetFinder</TITLE>
+
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+																									
+var cardinality = 0;							// keeps track of how many pc's are in a set
+var pcString = 0;								// string of pc's for printing
+var programOutput = 0;							// result of prime form calculation											
+var size = 0;
+var resetInput = 0;
+var transposition = 0;
+
+function MakeArray(size)						// from Idiot's Guide to JavaScript, Chapter 14
+{
+	this.length = size;
+ 	for (var k = 0; k < size; k++)
+ 	{	this[k] = 0 }
+ 	return this
+}
+
+function ClearKeyboard(pcString)				// reset button clears all checkboxes
+{
+	resetInput = "" ;
+	
+	for ( i = 2; i < 4; i++ )
+	{	document.forms[i].pcString.value = resetInput }
+
+	document.forms[3].invpcString.value = resetInput ;
+	document.forms[3].transLevel.value = resetInput ;
+	document.forms[3].invtransLevel.value = resetInput ;
+	
+	for ( i = 0; i < 12; i++)
+	{ document.forms[0].elements[i].checked = false; }
+}
+
+function toggleCheckbox (i)						// uses piano keyboard to toggle checkboxes
+{
+	document.forms[0].elements[i].checked = ! document.forms[0].elements[i].checked ;
+	AddToSet ()
+}
+
+/* ----------------------------- Parse User Input ----------------------------------- */
+
+function AddToSet() 									
+{
+	cardinality = 0;
+	j = 0;
+		
+	for (var i = 0; i <= 11; i++)				// find cardinality
+	{																													     
+		if (document.forms[0].elements[i].checked == true)
+		{	cardinality ++ }
+	}
+	
+	pc = new MakeArray(cardinality);    		// initialize array of pc's
+	
+	alreadyBeenChecked = new MakeArray(12);  	// flag for checked boxes
+        
+	while (j < cardinality)
+	{
+		for (var i = 0; i <= 11; i++)	 		// sort pc's in ascending order
+		{
+			if (document.forms[0].elements[i].checked == true 
+			&& alreadyBeenChecked[i] == false)
+			{
+				alreadyBeenChecked[i] = true ;
+				pc[j] = i ;
+				j++
+			} 
+		}
+	}
+	
+	pcInv = new MakeArray (cardinality) ;		// make array to hold pc set's inversion
+	
+	for ( m = cardinality; m > 0; m-- )			// invert pc's
+	{	pcInv[(cardinality - m)] = ( 12 - pc[(m - 1)] ) % 12  }
+
+	if (cardinality > 1)
+	{	
+		normalpc = FindSet (pc, cardinality) ;						// find normal order
+		transposition = normalpc[0] ;								// find transposition		
+
+		normalOutput = ArrayToString ( normalpc, cardinality ) ;	// print normal order
+		document.forms[3].pcString.value = normalOutput ;
+		document.forms[3].transLevel.value = "T " + transposition ;
+		
+		normalpcInv = FindSet (pcInv, cardinality);		// find normal order of inversion
+		transpositionInv = normalpcInv[0] ;				// find transposition of inversion		
+
+		inversionOutput = ArrayToString ( normalpcInv, cardinality ) ;	// print inversion
+		document.forms[3].invpcString.value = inversionOutput ;
+		document.forms[3].invtransLevel.value = "T" + transposition + " I" ;
+
+		CompareSets ( cardinality, normalpc, normalpcInv, transposition, transpositionInv )
+	}
+}
+
+/* ----------------------------- Calculate Normal Order ------------------------------ */
+
+function FindSet ( pc, cardinality )				
+{
+	outerInterval = new MakeArray ( cardinality ) ;	// make array to hold outside intervals	
+	var x = 0 ;
+	var smallestSoFar = 11 ;
+	var normalOrder = 0 ;
+	var y_Decrement = 0 ;
+	var normal_Decrement = 0 ;
+	
+	while ( x < cardinality )						// find outside interval and rotate pc's
+	{
+		if (x < 1)
+		{	outerInterval[x] = pc[cardinality - 1] - pc[x] }
+		else 
+		{	outerInterval[x] = pc[x - 1] - pc[x] }
+		
+		if (outerInterval[x] < 0)
+		{	outerInterval[x] += 12 }				// corrects for intervals < 0
+		x++ ;
+	}
+		
+	for ( y = 0; y < cardinality; y++ )				// test which outside interval is smallest
+	{
+		if ( outerInterval[y] < smallestSoFar )
+		{	
+			smallestSoFar = outerInterval[y] ;
+			normalOrder = y
+		}
+		if ( outerInterval[y] == smallestSoFar )	// if two outside intervals are tied...
+		{											// compare the next-largest intervals
+			nextToLast = new MakeArray (cardinality) ;
+			
+			z = 2;
+			
+			while ( z < cardinality )
+			{
+				y_Decrement = y - z;				// sets current interval to the next largest
+				if ( y_Decrement < 0 ) { y_Decrement += cardinality }
+				
+				normal_Decrement = normalOrder - z ; // sets defending interval to next largest
+				if ( normal_Decrement < 0 ) { normal_Decrement += cardinality }
+				
+				nextToLast[y] = ( pc[y_Decrement] - pc[y] ) ;
+				if ( nextToLast[y] < 0 ) { nextToLast[y] += 12 }
+				// challenger tied candidate
+				
+				
+				if ( normalOrder < 1)
+				{	nextToLast[normalOrder] = ( pc[(cardinality - z)] - pc[normalOrder] ) }
+				else
+				{	nextToLast[normalOrder] = ( pc[normal_Decrement] - pc[normalOrder] ) }
+				if ( nextToLast[normalOrder] < 0 ) { nextToLast[normalOrder] += 12 }
+				// defending tied candidate
+
+				
+				if ( nextToLast[y] < nextToLast[normalOrder] )
+				// if challenger's interval is smaller than defender's...
+				{	
+					normalOrder = y ; 
+					break ;
+				}
+				// challenger's ordering becomes the new normal order
+				
+				if ( nextToLast[y] == nextToLast[normalOrder] ) { z++ }
+				
+				else {	break }
+			}
+		}
+	}	
+	
+	normalOrdpc = new MakeArray (cardinality);		// make array to hold normal order of pc's
+	
+	for (z = 0; z < cardinality; z++ )				// sort pc's into normal order
+	{ normalOrdpc[z] = pc[ (z + normalOrder) % cardinality ] }
+	
+	return normalOrdpc ;							// returns normal order
+}
+
+/* ------------------- Determine Whether normal or inv Is Prime Form ------------------- */
+
+function CompareSets ( cardinality, normalpc, normalpcInv, transposition, transpositionInv )
+{
+	transpc = Transpose (cardinality, normalpc, transposition) ;
+	transpcInv = Transpose (cardinality, normalpcInv, transpositionInv) ;
+
+	transOutput = ArrayToString (transpc, cardinality ) ;
+	
+	transInvOutput = ArrayToString (transpcInv, cardinality ) ;
+
+	for ( n = 1; n <= cardinality; n++ )		// find prime form and print it
+	{
+		if ( transpcInv[(cardinality - n)] < transpc[(cardinality - n)] )
+		{
+			document.forms[2].pcString.value = transInvOutput ;
+			break
+		}
+		if ( transpcInv[(cardinality - n)] > transpc[(cardinality - n)] )
+		{
+			document.forms[2].pcString.value = transOutput ;
+			break
+		}
+		if ( n == cardinality )
+		{ 	
+			document.forms[2].pcString.value = transOutput ;
+			break
+		}
+	}
+}
+
+/* ------------------------ Transpose Pitch Classes to Start on 0 --------------------- */
+
+function Transpose (cardinality, neutralpc, transpose )
+{
+	for (z = 0; z < cardinality; z++ )			// transpose pc's to start with 0 and print
+	{	
+		neutralpc[z] = neutralpc[z] - transpose ;
+		if ( neutralpc[z] < 0 )
+		{	neutralpc[z] +=12 } ;				// corrects for pc's < 0
+	}
+
+	return neutralpc;
+}	
+
+/* ------------------------ Make a String of pc's to Print --------------------------- */
+
+function ArrayToString ( pc, cardinality )
+{
+	var pcString = 0 ;
+		
+	for (var j = 0; j < cardinality; ++j )
+	{
+		if (j < 1)
+		{ 	pcString = pc[j] }
+		else
+		{ 	pcString = pcString + " " + pc[j] }
+	}
+	return pcString
+}
+
+function SetStatus (msg)							// displays info in the status bar
+{
+	status = msg; return true
+}
+
+// -->
+</SCRIPT>
+</HEAD>
+
+<BODY BGCOLOR="ccccff" LINK="#483d8b" ALINK="#ffebcd" VLINK="#8b008b">
+
+<CENTER>
+	<font size=+2>SetFinder</font>
+</center>
+<br>
+
+<center>
+<IMG ismap SRC="keyboard.gif" BORDER=0 ALIGN=top 
+ALT="keyboard" USEMAP="#keyboard">
+
+<map name="keyboard">
+<area shape=rect COORDS="  0,   1,  26,  56" HREF="javascript:toggleCheckbox(0)" 
+onMouseover="return SetStatus ('C  (pitch class 0)')" onMouseOut="return SetStatus ('')">
+<area shape=rect COORDS="  0, 57,  37, 85" HREF="javascript:toggleCheckbox(0)" 
+onMouseover="return SetStatus ('C  (pitch class 0)')" onMouseOut="return SetStatus ('')">
+<area shape=rect COORDS=" 28,   1,  47,  56" HREF="javascript:toggleCheckbox(1)" 
+onMouseover="return SetStatus ('C#  (pitch class 1)')" onMouseOut="return SetStatus ('')">
+<area shape=rect COORDS=" 48,   1,  66,  56" HREF="javascript:toggleCheckbox(2)" 
+onMouseover="return SetStatus ('D  (pitch class 2)')" onMouseOut="return SetStatus ('')">
+<area shape=rect COORDS=" 40, 57,  76, 85" HREF="javascript:toggleCheckbox(2)" 
+onMouseover="return SetStatus ('D  (pitch class 2)')" onMouseOut="return SetStatus ('')">
+<area shape=rect COORDS=" 67,   1,  88,  56" HREF="javascript:toggleCheckbox(3)"
+onMouseover="return SetStatus ('D#  (pitch class 3)')" onMouseOut="return SetStatus ('')">
+<area shape=rect COORDS=" 88,   1, 112,  56" HREF="javascript:toggleCheckbox(4)"
+onMouseover="return SetStatus ('E  (pitch class 4)')" onMouseOut="return SetStatus ('')">
+<area shape=rect COORDS=" 78, 57, 112, 85" HREF="javascript:toggleCheckbox(4)" 
+onMouseover="return SetStatus ('E  (pitch class 4)')" onMouseOut="return SetStatus ('')">
+<area shape=rect COORDS="114,   1, 137,  56" HREF="javascript:toggleCheckbox(5)" 
+onMouseover="return SetStatus ('F  (pitch class 5)')" onMouseOut="return SetStatus ('')">
+<area shape=rect COORDS="114, 57, 149, 85" HREF="javascript:toggleCheckbox(5)"
+onMouseover="return SetStatus ('F  (pitch class 5)')" onMouseOut="return SetStatus ('')">
+<area shape=rect COORDS="138,   1, 159,  56" HREF="javascript:toggleCheckbox(6)" 
+onMouseover="return SetStatus ('F#  (pitch class 6)')" onMouseOut="return SetStatus ('')">
+<area shape=rect COORDS="160,   1, 178,  56" HREF="javascript:toggleCheckbox(7)" 
+onMouseover="return SetStatus ('G  (pitch class 7)')" onMouseOut="return SetStatus ('')">
+<area shape=rect COORDS="151, 57, 188, 85" HREF="javascript:toggleCheckbox(7)" 
+onMouseover="return SetStatus ('G  (pitch class 7)')" onMouseOut="return SetStatus ('')">
+<area shape=rect COORDS="179,   1, 198,  56" HREF="javascript:toggleCheckbox(8)" 
+onMouseover="return SetStatus ('G#  (pitch class 8)')" onMouseOut="return SetStatus ('')">
+<area shape=rect COORDS="156,   1, 215,  56" HREF="javascript:toggleCheckbox(9)" 
+onMouseover="return SetStatus ('A  (pitch class 9)')" onMouseOut="return SetStatus ('')">
+<area shape=rect COORDS="190, 57, 226, 85" HREF="javascript:toggleCheckbox(9)" 
+onMouseover="return SetStatus ('A  (pitch class 9)')" onMouseOut="return SetStatus ('')">
+<area shape=rect COORDS="216,   1, 237,  56" HREF="javascript:toggleCheckbox(10)" 
+onMouseover="return SetStatus ('A#  (pitch class 10)')" onMouseOut="return SetStatus ('')">
+<area shape=rect COORDS="238,   1, 265,  56" HREF="javascript:toggleCheckbox(11)" 
+onMouseover="return SetStatus ('B  (pitch class 11)')" onMouseOut="return SetStatus ('')">
+<area shape=rect COORDS="228, 57, 265, 85" HREF="javascript:toggleCheckbox(11)" 
+onMouseover="return SetStatus ('B  (pitch class 11)')" onMouseOut="return SetStatus ('')">
+</map>
+<FORM>
+	<INPUT TYPE="checkbox" NAME="pc" VALUE="0" ONCLICK="AddToSet()"> 	 
+	<INPUT TYPE="checkbox" NAME="pc" VALUE="1" ONCLICK="AddToSet()"> 	 
+	<INPUT TYPE="checkbox" NAME="pc" VALUE="2" ONCLICK="AddToSet()"> 	 
+	<INPUT TYPE="checkbox" NAME="pc" VALUE="3" ONCLICK="AddToSet()"> 	 
+	<INPUT TYPE="checkbox" NAME="pc" VALUE="4" ONCLICK="AddToSet()"> 	
+	<INPUT TYPE="checkbox" NAME="pc" VALUE="5" ONCLICK="AddToSet()"> 	
+	<INPUT TYPE="checkbox" NAME="pc" VALUE="6" ONCLICK="AddToSet()"> 	
+	<INPUT TYPE="checkbox" NAME="pc" VALUE="7" ONCLICK="AddToSet()"> 	
+	<INPUT TYPE="checkbox" NAME="pc" VALUE="8" ONCLICK="AddToSet()"> 	
+	<INPUT TYPE="checkbox" NAME="pc" VALUE="9" ONCLICK="AddToSet()"> 	
+	<INPUT TYPE="checkbox" NAME="pc" VALUE="10" ONCLICK="AddToSet()"> 	
+	<INPUT TYPE="checkbox" NAME="pc" VALUE="11" ONCLICK="AddToSet()"> 
+</FORM>
+
+<FORM>
+	<INPUT TYPE="RESET" VALUE="Reset" ONCLICK="ClearKeyboard(pcString)"> 
+</FORM>
+
+<FORM>
+<TABLE>
+	<TR>
+		<TH>Prime Form</TH>		
+		<TD><INPUT TYPE=TEXT NAME=pcString SIZE=32></TD>
+	</TR>
+</TABLE>
+</FORM>
+
+
+<FORM>
+<TABLE>
+	<TR>
+		<TD>Normal Order</TD>	
+		<TD><INPUT TYPE=TEXT NAME=pcString SIZE=26></TD>
+		<TD><INPUT TYPE=TEXT NAME=transLevel SIZE=4></TD>
+	</TR>
+</TABLE>
+
+<TABLE>
+	<TR>
+		<TD>Inversion</TD>
+		<TD><pre>   </pre></TD>
+		<TD><INPUT TYPE=TEXT NAME=invpcString SIZE=26></TD>
+		<TD><INPUT TYPE=TEXT NAME=invtransLevel SIZE=4></TD>
+	</TR>
+</TABLE>
+</FORM>
+</center>
+
+<blockquote>
+<font face='geneva,arial', size=-2>
+	Click on piano keys or checkboxes to find the prime form and other information for any 
+	pitch-class set.
+	
+  <p> Also check out an updated and improved version of SetFinder at <a href="http://composertools.com/Tools/PCSets/setfinder.html">Prime 
+    Form Calculator</a> by Paul Nelson at <a href="http://composertools.com/">composertools.com</a>, 
+    a big site containing much useful information.<br>
+  
+  </font>
+<hr>
+
+<center>
+<table border=0>
+  <tr>
+	    <td width=50%> <font face='geneva,arial', size=-2> This page was written 
+          by <a href="../index.html">Stephen Taylor</a>. Please send me questions 
+          or comments: <a href=mailto:staylor7@uiuc.edu>staylor7@uiuc.edu</a>. 
+          </font> </td>    
+        <td width=50%> <font face='geneva,arial', size=-2> Last updated 15 January, 
+          2006. Copyright 1997-2006 by Stephen Andrew Taylor. </font> </td>
+  </tr>
+</table>
+
+</center></blockquote>
+
+
+</BODY>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpsh'},{'server':'p3plcpnl0829'},{'dcenter':'p3'},{'cp_id':'7125882'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

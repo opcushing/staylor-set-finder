@@ -1,0 +1,415 @@
+<HTML>
+  <!--
+      -------------------------------------------------------------------------
+                  OUTLINE STYLE TABLE OF CONTENTS in JAVASCRIPT
+                                  Version 2.0
+                      by Danny Goodman (dannyg@dannyg.com)
+                      Analyzed and described at length in
+                               "JavaScript Bible"
+                                by Danny Goodman
+                        (IDG Books ISBN 0-7645-3022-4)
+      
+      This program is Copyright 1996 by Danny Goodman.  You may adapt
+      this outliner for your Web pages, provided these opening credit
+      lines (down to the lower dividing line) are in your outliner HTML document.
+      You may not reprint or redistribute this code without permission from 
+      the author.
+      -------------------------------------------------------------------------
+  -->
+  <!-- <BASE HREF="http://www.arts.ilstu.edu/~staylor/setfinder/"> -->
+  <HEAD>
+  <TITLE>Forte List</TITLE>
+  <SCRIPT LANGUAGE="JavaScript1.1">
+  
+  // ** BEGIN OUTLINE AUTHOR-ADUSTABLE SPECIFICATIONS **//
+  
+  var collapsedWidget = "collapsed.gif"
+  var expandedWidget = "expanded.gif"
+  var widgetWidth = 11
+  var widgetHeight = 11
+  var list = new Array(9)
+  
+  /* -------- Create a Two-Dimensional Array of All Sets (chord children) ------------ */
+  
+  function Chord (cardinality, forteName, primeForm, vector, z_relation, symDegree) {
+    this.cardinality = cardinality
+    this.forteName = forteName
+    this.primeForm = primeForm
+    this.vector = vector
+    this.z_relation = z_relation
+    this.symDegree = symDegree				// Goodman's Bible, p. 300
+  }
+  
+  trichord = new Array (12)
+  trichord[0] = new Chord (3, "3-1", "0,1,2", "2,1,0,0,0,0", "none", 2)
+  trichord[1] = new Chord (3, "3-2", "0,1,3", "1,1,1,0,0,0", "none", 1)
+  trichord[2] = new Chord (3, "3-3", "0,1,4", "1,0,1,1,0,0", "none", 1)
+  trichord[3] = new Chord (3, "3-4", "0,1,5", "1,0,0,1,1,0", "none", 1)
+  trichord[4] = new Chord (3, "3-5", "0,1,6", "1,0,0,0,1,1", "none", 1)
+  trichord[5] = new Chord (3, "3-6", "0,2,4", "0,2,0,1,0,0", "none", 2)
+  trichord[6] = new Chord (3, "3-7", "0,2,5", "0,1,1,0,1,0", "none", 1)
+  trichord[7] = new Chord (3, "3-8", "0,2,6", "0,1,0,1,0,1", "none", 1)
+  trichord[8] = new Chord (3, "3-9", "0,2,7", "0,1,0,0,2,0", "none", 2)
+  trichord[9] = new Chord (3, "3-10", "0,3,6", "0,0,2,0,0,1", "none", 2)
+  trichord[10] = new Chord (3, "3-11", "0,3,7", "0,0,1,1,1,0", "none", 1)
+  trichord[11] = new Chord (3, "3-12", "0,4,8", "0,0,0,3,0,0", "none", 6)
+  
+  tetrachord = new Array (29)
+  tetrachord[0] = new Chord (4, "4-1", "0,1,2,3", "3,2,1,0,0,0", "none", 2)
+  tetrachord[1] = new Chord (4, "4-2", "0,1,2,4", "2,2,1,1,0,0", "none", 1)
+  tetrachord[2] = new Chord (4, "4-3", "0,1,3,4", "2,1,2,1,0,0", "none", 2)
+  tetrachord[3] = new Chord (4, "4-4", "0,1,2,5", "2,1,1,1,1,0", "none", 1)
+  tetrachord[4] = new Chord (4, "4-5", "0,1,2,6", "2,1,0,1,1,1", "none", 1)
+  tetrachord[5] = new Chord (4, "4-6", "0,1,2,7", "2,1,0,0,2,1", "none", 2)
+  tetrachord[6] = new Chord (4, "4-7", "0,1,4,5", "2,0,1,2,1,0", "none", 2)
+  tetrachord[7] = new Chord (4, "4-8", "0,1,5,6", "2,0,0,1,2,1", "none", 2)
+  tetrachord[8] = new Chord (4, "4-9", "0,1,6,7", "2,0,0,0,2,2", "none", 4)
+  tetrachord[9] = new Chord (4, "4-10", "0,2,3,5", "1,2,2,0,1,0", "none", 2)
+  tetrachord[10] = new Chord (4, "4-11", "0,1,3,5", "1,2,1,1,1,0", "none", 1)
+  tetrachord[11] = new Chord (4, "4-12", "0,2,3,6", "1,1,2,1,0,1", "none", 1)
+  tetrachord[12] = new Chord (4, "4-13", "0,1,3,6", "1,1,2,0,1,1", "none", 1)
+  tetrachord[13] = new Chord (4, "4-14", "0,2,3,7", "1,1,1,1,2,0", "none", 1)
+  tetrachord[14] = new Chord (4, "4-z15", "0,1,4,6", "1,1,1,1,1,1", "4-z29", 1)
+  tetrachord[15] = new Chord (4, "4-16", "0,1,5,7", "1,1,0,1,2,1", "none", 1)
+  tetrachord[16] = new Chord (4, "4-17", "0,3,4,7", "1,0,2,2,1,0", "none", 1)
+  tetrachord[17] = new Chord (4, "4-18", "0,1,4,7", "1,0,2,1,1,1", "none", 1)
+  tetrachord[18] = new Chord (4, "4-19", "0,1,4,8", "1,0,1,3,1,0", "none", 1)
+  tetrachord[19] = new Chord (4, "4-20", "0,1,5,8", "1,0,1,2,2,0", "none", 2)
+  tetrachord[20] = new Chord (4, "4-21", "0,2,4,6", "0,3,0,2,0,1", "none", 2)
+  tetrachord[21] = new Chord (4, "4-22", "0,2,4,7", "0,2,1,1,2,0", "none", 1)
+  tetrachord[22] = new Chord (4, "4-23", "0,2,5,7", "0,2,1,0,3,0", "none", 2)
+  tetrachord[23] = new Chord (4, "4-24", "0,2,4,8", "0,2,0,3,0,1", "none", 2)
+  tetrachord[24] = new Chord (4, "4-25", "0,2,6,8", "0,2,0,2,0,2", "none", 4)
+  tetrachord[25] = new Chord (4, "4-26", "0,3,5,8", "0,1,2,1,2,0", "none", 2)
+  tetrachord[26] = new Chord (4, "4-27", "0,2,5,8", "0,1,2,1,1,1", "none", 1)
+  tetrachord[27] = new Chord (4, "4-28", "0,3,6,9", "0,0,4,0,0,2", "none", 8)
+  tetrachord[28] = new Chord (4, "4-z29", "0,1,3,7", "1,1,1,1,1,1", "4-z15", 1)
+  
+  pentachord = new Array (38)
+  pentachord[0] = new Chord (5, "5-1", "0,1,2,3,4", "4,3,2,1,0,0", "none", 2)
+  pentachord[1] = new Chord (5, "5-2", "0,1,2,3,5", "3,3,2,1,1,0", "none", 1)
+  pentachord[2] = new Chord (5, "5-3", "0,1,2,4,5", "3,2,2,2,1,0", "none", 1)
+  pentachord[3] = new Chord (5, "5-4", "0,1,2,3,6", "3,2,2,1,1,1", "none", 1)
+  pentachord[4] = new Chord (5, "5-5", "0,1,2,3,7", "3,2,1,1,2,1", "none", 1)
+  pentachord[5] = new Chord (5, "5-6", "0,1,2,5,6", "3,1,1,2,2,1", "none", 1)
+  pentachord[6] = new Chord (5, "5-7", "0,1,2,6,7", "3,1,0,1,3,2", "none", 1)
+  pentachord[7] = new Chord (5, "5-8", "0,2,3,4,6", "2,3,2,2,0,1", "none", 2)
+  pentachord[8] = new Chord (5, "5-9", "0,1,2,4,6", "2,3,1,2,1,1", "none", 1)
+  pentachord[9] = new Chord (5, "5-10", "0,1,3,4,6", "2,2,3,1,1,1", "none", 1)
+  pentachord[10] = new Chord (5, "5-11", "0,2,3,4,7", "2,2,2,2,2,0", "none", 1)
+  pentachord[11] = new Chord (5, "5-z12", "0,1,3,5,6", "2,2,2,1,2,1", "5-z36", 2)
+  pentachord[12] = new Chord (5, "5-13", "0,1,2,4,8", "2,2,1,3,1,1", "none", 1)
+  pentachord[13] = new Chord (5, "5-14", "0,1,2,5,7", "2,2,1,1,3,1", "none", 1)
+  pentachord[14] = new Chord (5, "5-15", "0,1,2,6,8", "2,2,0,2,2,2", "none", 2)
+  pentachord[15] = new Chord (5, "5-16", "0,1,3,4,7", "2,1,3,2,1,1", "none", 1)
+  pentachord[16] = new Chord (5, "5-z17", "0,1,3,4,8", "2,1,2,3,2,0", "5-z37", 2)
+  pentachord[17] = new Chord (5, "5-z18", "0,1,4,5,7", "2,1,2,2,2,1", "5-z38", 1)
+  pentachord[18] = new Chord (5, "5-19", "0,1,3,6,7", "2,1,2,1,2,2", "none", 1)
+  pentachord[19] = new Chord (5, "5-20", "0,1,5,6,8", "2,1,1,2,3,1", "none", 1)
+  pentachord[20] = new Chord (5, "5-21", "0,1,4,5,8", "2,0,2,4,2,0", "none", 1)
+  pentachord[21] = new Chord (5, "5-22", "0,1,4,7,8", "2,0,2,3,2,1", "none", 2)
+  pentachord[22] = new Chord (5, "5-23", "0,2,3,5,7", "1,3,2,1,3,0", "none", 1)
+  pentachord[23] = new Chord (5, "5-24", "0,1,3,5,7", "1,3,1,2,2,1", "none", 1)
+  pentachord[24] = new Chord (5, "5-25", "0,2,3,5,8", "1,2,3,1,2,1", "none", 1)
+  pentachord[25] = new Chord (5, "5-26", "0,2,4,5,8", "1,2,2,3,1,1", "none", 1)
+  pentachord[26] = new Chord (5, "5-27", "0,1,3,5,8", "1,2,2,2,3,0", "none", 1)
+  pentachord[27] = new Chord (5, "5-28", "0,2,3,6,8", "1,2,2,2,1,2", "none", 1)
+  pentachord[28] = new Chord (5, "5-29", "0,1,3,6,8", "1,2,2,1,3,1", "none", 1)
+  pentachord[29] = new Chord (5, "5-30", "0,1,4,6,8", "1,2,1,3,2,1", "none", 1)
+  pentachord[30] = new Chord (5, "5-31", "0,1,3,6,9", "1,1,4,1,1,2", "none", 1)
+  pentachord[31] = new Chord (5, "5-32", "0,1,4,6,9", "1,1,3,2,2,1", "none", 1)
+  pentachord[32] = new Chord (5, "5-33", "0,2,4,6,8", "0,4,0,4,0,2", "none", 2)
+  pentachord[33] = new Chord (5, "5-34", "0,2,4,6,9", "0,3,2,2,2,1", "none", 2)
+  pentachord[34] = new Chord (5, "5-35", "0,2,4,7,9", "0,3,2,1,4,0", "none", 2)
+  pentachord[35] = new Chord (5, "5-z36", "0,1,2,4,7", "2,2,2,1,2,1", "5-z12", 1)
+  pentachord[36] = new Chord (5, "5-z37", "0,3,4,5,8", "2,1,2,3,2,0", "5-z17", 2)
+  pentachord[37] = new Chord (5, "5-z38", "0,1,2,5,8", "2,1,2,2,2,1", "5-z18", 1)
+  
+  hexachord = new Array (50)
+  hexachord[0] = new Chord (6, "6-1", "0,1,2,3,4,5", "5,4,3,2,1,0", "none", 2)
+  hexachord[1] = new Chord (6, "6-2", "0,1,2,3,4,6", "4,4,3,2,1,1", "none", 1)
+  hexachord[2] = new Chord (6, "6-z3", "0,1,2,3,5,6", "4,3,3,2,2,1", "6-z36", 1)
+  hexachord[3] = new Chord (6, "6-z4", "0,1,2,4,5,6", "4,3,2,3,2,1", "6-z37", 2)
+  hexachord[4] = new Chord (6, "6-5", "0,1,2,3,6,7", "4,2,2,2,3,2", "none", 1)
+  hexachord[5] = new Chord (6, "6-z6", "0,1,2,5,6,7", "4,2,1,2,4,2", "6-z38", 2)
+  hexachord[6] = new Chord (6, "6-7", "0,1,2,6,7,8", "4,2,0,2,4,3", "none", 4)
+  hexachord[7] = new Chord (6, "6-8", "0,2,3,4,5,7", "3,4,3,2,3,0", "none", 2)
+  hexachord[8] = new Chord (6, "6-9", "0,1,2,3,5,7", "3,4,2,2,3,1", "none", 1)
+  hexachord[9] = new Chord (6, "6-z10", "0,1,3,4,5,7", "3,3,3,3,2,1", "6-z39", 1)
+  hexachord[10] = new Chord (6, "6-z11", "0,1,2,4,5,7", "3,3,3,2,3,1", "6-z40", 1)
+  hexachord[11] = new Chord (6, "6-z12", "0,1,2,4,6,7", "3,3,2,2,3,2", "6-z41", 1)
+  hexachord[12] = new Chord (6, "6-z13", "0,1,3,4,6,7", "3,2,4,2,2,2", "6-z42", 2)
+  hexachord[13] = new Chord (6, "6-14", "0,1,3,4,5,8", "3,2,3,4,3,0", "none", 1)
+  hexachord[14] = new Chord (6, "6-15", "0,1,2,4,5,8", "3,2,3,4,2,1", "none", 1)
+  hexachord[15] = new Chord (6, "6-16", "0,1,4,5,6,8", "3,2,2,4,3,1", "none", 1)
+  hexachord[16] = new Chord (6, "6-z17", "0,1,2,4,7,8", "3,2,2,3,3,2", "6-z43", 1)
+  hexachord[17] = new Chord (6, "6-18", "0,1,2,5,7,8", "3,2,2,2,4,2", "none", 1)
+  hexachord[18] = new Chord (6, "6-z19", "0,1,3,4,7,8", "3,1,3,4,3,1", "6-z44", 1)
+  hexachord[19] = new Chord (6, "6-20", "0,1,4,5,8,9", "3,0,3,6,3,0", "none", 6)
+  hexachord[20] = new Chord (6, "6-21", "0,2,3,4,6,8", "2,4,2,4,1,2", "none", 1)
+  hexachord[21] = new Chord (6, "6-22", "0,1,2,4,6,8", "2,4,1,4,2,2", "none", 1)
+  hexachord[22] = new Chord (6, "6-z23", "0,2,3,5,6,8", "2,3,4,2,2,2", "6-z45", 1)
+  hexachord[23] = new Chord (6, "6-z24", "0,1,3,4,6,8", "2,3,3,3,3,1", "6-z46", 1)
+  hexachord[24] = new Chord (6, "6-z25", "0,1,3,5,6,8", "2,3,3,2,4,1", "6-z47", 1)
+  hexachord[25] = new Chord (6, "6-z26", "0,1,3,5,7,8", "2,3,2,3,4,1", "6-z48", 1)
+  hexachord[26] = new Chord (6, "6-27", "0,1,3,4,6,9", "2,2,5,2,2,2", "none", 1)
+  hexachord[27] = new Chord (6, "6-z28", "0,1,3,5,6,9", "2,2,4,3,2,2", "6-z49", 2)
+  hexachord[28] = new Chord (6, "6-z29", "0,2,3,6,7,9", "2,2,4,2,3,2", "6-z50", 2)
+  hexachord[29] = new Chord (6, "6-30", "0,1,3,6,7,9", "2,2,4,2,2,3", "none", 2)
+  hexachord[30] = new Chord (6, "6-31", "0,1,4,5,7,9", "2,2,3,4,3,1", "none", 1)
+  hexachord[31] = new Chord (6, "6-32", "0,2,4,5,7,9", "1,4,3,2,5,0", "none", 2)
+  hexachord[32] = new Chord (6, "6-33", "0,2,3,5,7,9", "1,4,3,2,4,1", "none", 1)
+  hexachord[33] = new Chord (6, "6-34", "0,1,3,5,7,9", "1,4,2,4,2,2", "none", 1)
+  hexachord[34] = new Chord (6, "6-35", "0,2,4,6,8,10", "0,6,0,6,0,3", "none", 12)
+  hexachord[35] = new Chord (6, "6-z36", "0,1,2,3,4,7", "4,3,3,2,2,1", "6-z3", 1)
+  hexachord[36] = new Chord (6, "6-z37", "0,1,2,3,4,8", "4,3,2,3,2,1", "6-z4", 2)
+  hexachord[37] = new Chord (6, "6-z38", "0,1,2,3,7,8", "4,2,1,2,4,2", "6-z6", 2)
+  hexachord[38] = new Chord (6, "6-z39", "0,2,3,4,5,8", "3,3,3,3,2,1", "6-z10", 1)
+  hexachord[39] = new Chord (6, "6-z40", "0,1,2,3,5,8", "3,3,3,2,3,1", "6-z11", 1)
+  hexachord[40] = new Chord (6, "6-z41", "0,1,2,3,6,8", "3,3,2,2,3,2", "6-z12", 1)
+  hexachord[41] = new Chord (6, "6-z42", "0,1,2,3,6,9", "3,2,4,2,2,2", "6-z13", 2)
+  hexachord[42] = new Chord (6, "6-z43", "0,1,2,5,6,8", "3,2,2,3,3,2", "6-z17", 1)
+  hexachord[43] = new Chord (6, "6-z44", "0,1,2,5,6,9", "3,1,3,4,3,1", "6-z19", 1)
+  hexachord[44] = new Chord (6, "6-z45", "0,2,3,4,6,9", "2,3,4,2,2,2", "6-z23", 1)
+  hexachord[45] = new Chord (6, "6-z46", "0,1,2,4,6,9", "2,3,3,3,3,1", "6-z24", 1)
+  hexachord[46] = new Chord (6, "6-z47", "0,1,2,4,7,9", "2,3,3,2,4,1", "6-z25", 1)
+  hexachord[47] = new Chord (6, "6-z48", "0,1,2,5,7,9", "2,3,2,3,4,1", "6-z26", 1)
+  hexachord[48] = new Chord (6, "6-z49", "0,1,3,4,7,9", "2,2,4,3,2,2", "6-z28", 2)
+  hexachord[49] = new Chord (6, "6-z50", "0,1,4,6,7,9", "2,2,4,2,3,2", "6-z29", 2)
+  
+  septachord = new Array (38)
+  septachord[0] = new Chord (7, "7-1", "0,1,2,3,4,5,6", "6,5,4,3,2,1", "none", 2)
+  septachord[1] = new Chord (7, "7-2", "0,1,2,3,4,5,7", "5,5,4,3,3,1", "none", 1)
+  septachord[2] = new Chord (7, "7-3", "0,1,2,3,4,5,8", "5,4,4,4,3,1", "none", 1)
+  septachord[3] = new Chord (7, "7-4", "0,1,2,3,4,6,7", "5,4,4,3,3,2", "none", 1)
+  septachord[4] = new Chord (7, "7-5", "0,1,2,3,5,6,7", "5,4,3,3,4,2", "none", 1)
+  septachord[5] = new Chord (7, "7-6", "0,1,2,3,4,7,8", "5,3,3,4,4,2", "none", 1) // Rahn version differs from Forte's
+  septachord[6] = new Chord (7, "7-7", "0,1,2,3,6,7,8", "5,3,2,3,5,3", "none", 1)
+  septachord[7] = new Chord (7, "7-8", "0,2,3,4,5,6,8", "4,5,4,4,2,2", "none", 2)
+  septachord[8] = new Chord (7, "7-9", "0,1,2,3,4,6,8", "4,5,3,4,3,2", "none", 1)
+  septachord[9] = new Chord (7, "7-10", "0,1,2,3,4,6,9", "4,4,5,3,3,2", "none", 1)
+  septachord[10] = new Chord (7, "7-11", "0,1,3,4,5,6,8", "4,4,4,4,4,1", "none", 1)
+  septachord[11] = new Chord (7, "7-z12", "0,1,2,3,4,7,9", "4,4,4,3,4,2", "7-z36", 2)
+  septachord[12] = new Chord (7, "7-13", "0,1,2,4,5,6,8", "4,4,3,5,3,2", "none", 1)
+  septachord[13] = new Chord (7, "7-14", "0,1,2,3,5,7,8", "4,4,3,3,5,2", "none", 1)
+  septachord[14] = new Chord (7, "7-15", "0,1,2,4,6,7,8", "4,4,2,4,4,3", "none", 2)
+  septachord[15] = new Chord (7, "7-16", "0,1,2,3,5,6,9", "4,3,5,4,3,2", "none", 1)
+  septachord[16] = new Chord (7, "7-z17", "0,1,2,4,5,6,9", "4,3,4,5,4,1", "7-z37", 2)
+  septachord[17] = new Chord (7, "7-z18", "0,1,4,5,6,7,9", "4,3,4,4,4,2", "7-z38", 1) // Rahn
+  septachord[18] = new Chord (7, "7-19", "0,1,2,3,6,7,9", "4,3,4,3,4,3", "none", 1)
+  septachord[19] = new Chord (7, "7-20", "0,1,2,5,6,7,9", "4,3,3,4,5,2", "none", 1)  // Rahn
+  septachord[20] = new Chord (7, "7-21", "0,1,2,4,5,8,9", "4,2,4,6,4,1", "none", 1)
+  septachord[21] = new Chord (7, "7-22", "0,1,2,5,6,8,9", "4,2,4,5,4,2", "none", 2)
+  septachord[22] = new Chord (7, "7-23", "0,2,3,4,5,7,9", "3,5,4,3,5,1", "none", 1)
+  septachord[23] = new Chord (7, "7-24", "0,1,2,3,5,7,9", "3,5,3,4,4,2", "none", 1)
+  septachord[24] = new Chord (7, "7-25", "0,2,3,4,6,7,9", "3,4,5,3,4,2", "none", 1)
+  septachord[25] = new Chord (7, "7-26", "0,1,3,4,5,7,9", "3,4,4,5,3,2", "none", 1)
+  septachord[26] = new Chord (7, "7-27", "0,1,2,4,5,7,9", "3,4,4,4,5,1", "none", 1)
+  septachord[27] = new Chord (7, "7-28", "0,1,3,5,6,7,9", "3,4,4,4,3,3", "none", 1)
+  septachord[28] = new Chord (7, "7-29", "0,1,2,4,6,7,9", "3,4,4,3,5,2", "none", 1)
+  septachord[29] = new Chord (7, "7-30", "0,1,2,4,6,8,9", "3,4,3,5,4,2", "none", 1)
+  septachord[30] = new Chord (7, "7-31", "0,1,3,4,6,7,9", "3,3,6,3,3,3", "none", 1)
+  septachord[31] = new Chord (7, "7-32", "0,1,3,4,6,8,9", "3,3,5,4,4,2", "none", 1)
+  septachord[32] = new Chord (7, "7-33", "0,1,2,4,6,8,10", "2,6,2,6,2,3", "none", 2)
+  septachord[33] = new Chord (7, "7-34", "0,1,3,4,6,8,10", "2,5,4,4,4,2", "none", 2)
+  septachord[34] = new Chord (7, "7-35", "0,1,3,5,6,8,10", "2,5,4,3,6,1", "none", 2)
+  septachord[35] = new Chord (7, "7-z36", "0,1,2,3,5,6,8", "4,4,4,3,4,2", "7-z12", 1)
+  septachord[36] = new Chord (7, "7-z37", "0,1,3,4,5,7,8", "4,3,4,5,4,1", "7-z17", 2)
+  septachord[37] = new Chord (7, "7-z38", "0,1,2,4,5,7,8", "4,3,4,4,4,2", "7-z18", 1)
+  
+  octachord = new Array (29)
+  octachord[0] = new Chord (8, "8-1", "0,1,2,3,4,5,6,7", "7,6,5,4,4,2", "none", 2)
+  octachord[1] = new Chord (8, "8-2", "0,1,2,3,4,5,6,8", "6,6,5,5,4,2", "none", 1)
+  octachord[2] = new Chord (8, "8-3", "0,1,2,3,4,5,6,9", "6,5,6,5,4,2", "none", 2)
+  octachord[3] = new Chord (8, "8-4", "0,1,2,3,4,5,7,8", "6,5,5,5,5,2", "none", 1)
+  octachord[4] = new Chord (8, "8-5", "0,1,2,3,4,6,7,8", "6,5,4,5,5,3", "none", 1)
+  octachord[5] = new Chord (8, "8-6", "0,1,2,3,5,6,7,8", "6,5,4,4,6,3", "none", 2)
+  octachord[6] = new Chord (8, "8-7", "0,1,2,3,4,5,8,9", "6,4,5,6,5,2", "none", 2)
+  octachord[7] = new Chord (8, "8-8", "0,1,2,3,4,7,8,9", "6,4,4,5,6,3", "none", 2)
+  octachord[8] = new Chord (8, "8-9", "0,1,2,3,6,7,8,9", "6,4,4,4,6,4", "none", 4)
+  octachord[9] = new Chord (8, "8-10", "0,2,3,4,5,6,7,9", "5,6,6,4,5,2", "none", 2)
+  octachord[10] = new Chord (8, "8-11", "0,1,2,3,4,5,7,9", "5,6,5,5,5,2", "none", 1)
+  octachord[11] = new Chord (8, "8-12", "0,1,3,4,5,6,7,9", "5,5,6,5,4,3", "none", 1)
+  octachord[12] = new Chord (8, "8-13", "0,1,2,3,4,6,7,9", "5,5,6,4,5,3", "none", 1)
+  octachord[13] = new Chord (8, "8-14", "0,1,2,4,5,6,7,9", "5,5,5,5,6,2", "none", 1)
+  octachord[14] = new Chord (8, "8-z15", "0,1,2,3,4,6,8,9", "5,5,5,5,5,3", "8-z29", 1)
+  octachord[15] = new Chord (8, "8-16", "0,1,2,3,5,7,8,9", "5,5,4,5,6,3", "none", 1)
+  octachord[16] = new Chord (8, "8-17", "0,1,3,4,5,6,8,9", "5,4,6,6,5,2", "none", 1)
+  octachord[17] = new Chord (8, "8-18", "0,1,2,3,5,6,8,9", "5,4,6,5,5,3", "none", 1)
+  octachord[18] = new Chord (8, "8-19", "0,1,2,4,5,6,8,9", "5,4,5,7,5,2", "none", 1)
+  octachord[19] = new Chord (8, "8-20", "0,1,2,4,5,7,8,9", "5,4,5,6,6,2", "none", 2)
+  octachord[20] = new Chord (8, "8-21", "0,1,2,3,4,6,8,10", "4,7,4,6,4,3", "none", 2)
+  octachord[21] = new Chord (8, "8-22", "0,1,2,3,5,6,8,10", "4,6,5,5,6,2", "none", 1)
+  octachord[22] = new Chord (8, "8-23", "0,1,2,3,5,7,8,10", "4,6,5,4,7,2", "none", 2)
+  octachord[23] = new Chord (8, "8-24", "0,1,2,4,5,6,8,10", "4,6,4,7,4,3", "none", 2)
+  octachord[24] = new Chord (8, "8-25", "0,1,2,4,6,7,8,10", "4,6,4,6,4,4", "none", 4)
+  octachord[25] = new Chord (8, "8-26", "0,1,3,4,5,7,8,10", "4,5,6,5,6,2", "none", 2) // Rahn
+  octachord[26] = new Chord (8, "8-27", "0,1,2,4,5,7,8,10", "4,5,6,5,5,3", "none", 1)
+  octachord[27] = new Chord (8, "8-28", "0,1,3,4,6,7,9,10", "4,4,8,4,4,4", "none", 8)
+  octachord[28] = new Chord (8, "8-z29", "0,1,2,3,5,6,7,9", "5,5,5,5,5,3", "8-z15", 1)
+  
+  nonachord = new Array (12)
+  nonachord[0] = new Chord (9, "9-1", "0,1,2,3,4,5,6,7,8", "8,7,6,6,6,3", "none", 2)
+  nonachord[1] = new Chord (9, "9-2", "0,1,2,3,4,5,6,7,9", "7,7,7,6,6,3", "none", 1)
+  nonachord[2] = new Chord (9, "9-3", "0,1,2,3,4,5,6,8,9", "7,6,7,7,6,3", "none", 1)
+  nonachord[3] = new Chord (9, "9-4", "0,1,2,3,4,5,7,8,9", "7,6,6,7,7,3", "none", 1)
+  nonachord[4] = new Chord (9, "9-5", "0,1,2,3,4,6,7,8,9", "7,6,6,6,7,4", "none", 1)
+  nonachord[5] = new Chord (9, "9-6", "0,1,2,3,4,5,6,8,10", "6,8,6,7,6,3", "none", 2)
+  nonachord[6] = new Chord (9, "9-7", "0,1,2,3,4,5,7,8,10", "6,7,7,6,7,3", "none", 1)
+  nonachord[7] = new Chord (9, "9-8", "0,1,2,3,4,6,7,8,10", "6,7,6,7,6,4", "none", 1)
+  nonachord[8] = new Chord (9, "9-9", "0,1,2,3,5,6,7,8,10", "6,7,6,6,8,3", "none", 2)
+  nonachord[9] = new Chord (9, "9-10", "0,1,2,3,4,6,7,9,10", "6,6,8,6,6,4", "none", 2)
+  nonachord[10] = new Chord (9, "9-11", "0,1,2,3,5,6,7,9,10", "6,6,7,7,7,3", "none", 1)
+  nonachord[11] = new Chord (9, "9-12", "0,1,2,4,5,6,8,9,10", "6,6,6,9,6,3", "none", 6)
+  
+  //object constructor for each outline entry
+  // (see object-building calls, below)
+  
+  function dbRecord ( groupName, chordType, numberOfSets ) {
+    this.groupName = groupName ;			// text to display
+    this.chordType = chordType ;			// javascript URL to display chord children
+    this.numberOfSets = numberOfSets ;		// how many javascript for loops for each chord
+    return this
+  }
+  
+  var db = new Array ()
+  db[1] = new dbRecord ("<b>Trichords</b>", trichord, 12) ;
+  db[2] = new dbRecord ("<b>Tetrachords</b>", tetrachord, 29) ;
+  db[3] = new dbRecord ("<b>Pentachords</b>", pentachord, 38) ;
+  db[4] = new dbRecord ("<b>Hexachords</b>", hexachord, 50) ;
+  db[5] = new dbRecord ("<b>Septachords</b>", septachord, 38) ;
+  db[6] = new dbRecord ("<b>Octachords</b>", octachord, 29) ;
+  db[7] = new dbRecord ("<b>Nonachords</b>", nonachord, 12) ;
+  
+  // function to display pcset's data in the main window
+  function displaySet ( firstpc ) {
+    parent.SetFinder.ClearKeyboard ( )
+    for (var i = 0; i < displaySet.arguments.length; i++ ) {
+      parent.SetFinder.toggleCheckbox ( displaySet.arguments[i] )
+    }
+  }
+  
+  // pre-load images into cache
+  var collapsedImg = new Image (widgetWidth,widgetHeight)
+  collapsedImg.src = collapsedWidget
+  var expandedImg = new Image (widgetWidth,widgetHeight)
+  expandedImg.src = expandedWidget
+  
+  // ** functions that get and set persistent cookie data **
+  
+  var mycookie = document.cookie
+              function setCurrState(setting) {
+                 mycookie = document.cookie = "currState=" + escape(setting)
+              }
+              
+              // retrieve cookie data
+              function getCurrState() {
+                 var label = "currState="
+                 var labelLen = label.length
+                 var cLen = mycookie.length
+                 var i = 0
+                 while (i < cLen) {
+                    var j = i + labelLen
+                    if (mycookie.substring(i,j) == label) {
+                       var cEnd = mycookie.indexOf(";",j)
+                       if (cEnd ==     -1) {
+                          cEnd = mycookie.length
+                       }
+                       return unescape(mycookie.substring(j,cEnd))
+                    }
+                    i++
+                 }
+                 return ""
+              }
+  
+  // **function that updates persistent storage of state**
+  // toggles an outline mother entry, storing new value in the cookie
+  function toggle(n) {
+    if (n != 0) {
+      var newString = ""
+      var currState = getCurrState() // of whole outline
+      var expanded = currState.charAt(n-1) // of clicked item
+      newString += currState.substring(0,n-1)
+      newString += expanded ^ 1 // Bitwise XOR clicked item
+      newString += currState.substring(n,currState.length)
+      setCurrState(newString) // write new state back to cookie
+    }
+  }
+  
+  // ** functions used in assembling updated outline **
+  // returns the proper GIF file name for each entry's control
+  function getGIF (n) {
+    var expanded = getCurrState().charAt(n-1) // of clicked item
+    if (expanded == 1) {
+      return expandedWidget
+    } else {
+      return collapsedWidget
+    }
+  }
+  
+  // returns the proper status line text based on the icon style
+  function getGIFStatus (n) {
+    var expanded = getCurrState().charAt(n-1)	// is entry expanded?
+    if (expanded == 1) {
+      return "Click to collapse the list of sets"
+    }	else {
+      return "Click to expand the list of sets"
+    }
+  }
+  
+  // initialize 'current state' storage field
+  if (getCurrState() == "" || getCurrState().length != (db.length-1)) {
+    initState = ""
+    for (i = 1; i < db.length; i++) {
+      initState += "0"
+    }
+    setCurrState(initState)
+  }
+  
+  // end
+  </SCRIPT>
+  </HEAD>
+  
+  <BODY BGCOLOR="beige" LINK="000000">
+  <font face='geneva, arial', size=1>
+  
+  <center><b>List of Pitch-Class Sets</b><br>
+    <u>Forte name</u> [prime form] &lt;interval vector&gt; 
+  </center>
+  <p></p>
+  
+  <script language="JavaScript1.1">
+  <!-- start
+  // build list of sets
+  
+  var newOutline = ""
+  
+  // cycle through each entry in the outline array
+  
+  var i = 1;
+  while ( i < db.length ) {
+    var theGIF = getGIF(i)					// get the image
+    var theGIFStatus = getGIFStatus(i)			// get the status message
+    var expanded = getCurrState().charAt(i-1) 	// current state
+    
+    newOutline += "<a href= \"javascript:history.go(0)\" onMouseOver= \"window.status= \'" + theGIFStatus + "\' ; return true; \" onClick= \"toggle(" + i + ")\">" 
+    newOutline += "<img src=\"" + theGIF + "\" height = " + widgetHeight + " width = " + widgetWidth + " border=0> " + db[i].groupName + "</a><br>";
+    
+    if ( expanded == 1 ) {						// prints the list of sets for an expanded heading
+      var j = 0
+      while ( j < db[i].numberOfSets ) {
+        newOutline += "<a href= \"javascript:displaySet ( " + db[i].chordType[j].primeForm + " )\">" + db[i].chordType[j].forteName + "</a>" + " [" + db[i].chordType[j].primeForm + "] <" + db[i].chordType[j].vector +"><br>" ;
+        j++
+      }
+    }
+    newOutline += "<p>"
+    // document.write (newOutline) (this makes too many duplications)
+    i++
+  }
+  document.write (newOutline)
+  
+  // end -->
+  </script>
+  </body>
+  <script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpsh'},{'server':'p3plcpnl0829'},{'dcenter':'p3'},{'cp_id':'7125882'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>
+  
