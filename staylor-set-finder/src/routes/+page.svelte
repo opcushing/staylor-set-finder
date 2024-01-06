@@ -1,2 +1,17 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script>
+	import SetFinder from './SetFinder.svelte';
+	import Sidebar from './Sidebar.svelte';
+</script>
+
+<div class="app">
+	<Sidebar />
+	<SetFinder />
+</div>
+
+<style>
+	.app {
+		display: flex;
+		flex-direction: row;
+		min-height: 100vh;
+	}
+</style>
