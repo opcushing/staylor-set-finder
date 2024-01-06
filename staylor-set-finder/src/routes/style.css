@@ -1,0 +1,10 @@
+@import '@fontsource/source-sans-pro';
+
+:root {
+  --font-body: 'Source Sans Pro';
+  font-family: var(--font-body);
+}
+
+body {
+  margin: 0;
+}
