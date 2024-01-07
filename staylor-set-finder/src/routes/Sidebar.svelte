@@ -1,25 +1,29 @@
 <script>
 	import Menu from 'svelte-material-icons/Menu.svelte';
 	import { fly, slide } from 'svelte/transition';
+	import { cubicOut } from 'svelte/easing';
+	import { tweened } from 'svelte/motion';
 
 	import ChordsDropdown from './Sidebar/ChordsDropdown.svelte';
 
-	let open = true;
-
-	function ToggleSidebar() {
-		open = !open;
-	}
+	let visible = true;
 </script>
 
 <div class="sidebar">
-	{#if open}
-		<div class="content">
-			<h1>List of Pitch Class Sets</h1>
-			<ChordsDropdown />
+	{#if visible}
+		<div in:slide={{ axis: 'x', duration: 400 }} out:slide={{ axis: 'x', duration: 400 }}>
+			<div class="content">
+				<h1>List of Pitch Class Sets</h1>
+				<ChordsDropdown />
+			</div>
 		</div>
 	{/if}
-	<!-- TODO: insert a clickable "MdMenu" icon. Collapses / uncollapses the menu on click. -->
-	<button class="toggle" on:click={ToggleSidebar}>
+	<button
+		class="toggle"
+		on:click={() => {
+			visible = !visible;
+		}}
+	>
 		<Menu size="2rem" />
 	</button>
 </div>
@@ -31,7 +35,7 @@
 	}
 
 	.sidebar {
-		width: fit-content;
+		width: auto;
 		background-color: lightgrey;
 		display: flex;
 		flex-direction: row;
