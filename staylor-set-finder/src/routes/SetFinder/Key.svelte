@@ -24,6 +24,7 @@
 		display: block;
 		position: relative;
 		margin-top: auto;
+		box-sizing: border-box;
 	}
 
 	h1 {
