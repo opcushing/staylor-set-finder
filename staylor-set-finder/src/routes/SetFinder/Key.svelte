@@ -1,12 +1,10 @@
 <script>
 	export let number = 0;
 	export let selected = false;
-	export const isWhite = true;
-
-	const keyClass = isWhite ? 'white' : 'black';
+	export let isWhite = true;
 </script>
 
-<div class={keyClass}>
+<div class:white={isWhite} class:black={!isWhite}>
 	<h1>{number}</h1>
 </div>
 
@@ -20,10 +18,8 @@
 		border-top-right-radius: 3px;
 		border-bottom-left-radius: 20px;
 		border-bottom-right-radius: 20px;
-
 		display: block;
 		position: relative;
-		margin-top: auto;
 		box-sizing: border-box;
 	}
 

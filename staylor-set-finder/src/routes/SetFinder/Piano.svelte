@@ -5,14 +5,24 @@
 </script>
 
 <div class="keybed">
-	<div class="whiteKeys">
-		<Key isWhite={true} />
-		<Key isWhite={true} number={2} />
-		<Key isWhite={true} number={4} />
-		<Key isWhite={true} number={5} />
-		<Key isWhite={true} number={7} />
-		<Key isWhite={true} number={9} />
-		<Key isWhite={true} number={11} />
+	<div class="keys">
+		<Key />
+		<Key number={2} />
+		<Key number={4} />
+		<Key number={5} />
+		<Key number={7} />
+		<Key number={9} />
+		<Key number={11} />
+	</div>
+	<div class="keys blackKeys">
+		<div class="side" />
+		<Key isWhite={false} number={1} />
+		<Key isWhite={false} number={3} />
+		<div class="gap" />
+		<Key isWhite={false} number={6} />
+		<Key isWhite={false} number={8} />
+		<Key isWhite={false} number={10} />
+		<div class="side" />
 	</div>
 </div>
 
@@ -26,18 +36,34 @@
 		width: 860px;
 		height: 360px;
 		box-sizing: border-box;
+
+		position: relative;
 	}
 
-	.whiteKeys {
+	.keys {
 		display: flex;
 		flex-direction: row;
-		justify-content: space-evenly;
-		align-items: center;
 		padding: 1rem;
 		width: auto;
 		height: 100%;
 
 		box-sizing: border-box;
 		gap: 0.5rem;
+	}
+
+	.blackKeys {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
+
+	.gap {
+		width: 100%;
+	}
+
+	.side {
+		width: 50%;
 	}
 </style>
