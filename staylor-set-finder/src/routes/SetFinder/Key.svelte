@@ -2,14 +2,18 @@
 	export let number = 0;
 	export let selected = false;
 	export let isWhite = true;
+
+	function toggleSelect() {
+		selected = !selected;
+	}
 </script>
 
-<div class:white={isWhite} class:black={!isWhite}>
+<button class:white={isWhite} class:black={!isWhite} class:selected on:click={toggleSelect}>
 	<h1>{number}</h1>
-</div>
+</button>
 
 <style>
-	div {
+	button {
 		width: 100%;
 		height: 100%;
 		border: solid;
@@ -21,6 +25,8 @@
 		display: block;
 		position: relative;
 		box-sizing: border-box;
+
+		pointer-events: all;
 	}
 
 	h1 {
@@ -29,6 +35,7 @@
 		right: 0;
 		left: 0;
 		text-align: center;
+		user-select: none;
 	}
 
 	.white {
@@ -42,5 +49,22 @@
 		border-color: gray;
 		color: white;
 		height: 60%;
+	}
+
+	.white:hover:not(.selected) {
+		background-color: #dcdcdc;
+	}
+	.black:hover:not(.selected) {
+		background-color: #3f3f3f;
+	}
+
+	.selected {
+		background-color: hsl(197, 90%, 65%);
+		border-color: black;
+		color: black;
+	}
+
+	.selected:hover {
+		background-color: hsl(197, 91%, 56%);
 	}
 </style>

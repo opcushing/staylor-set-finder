@@ -49,6 +49,8 @@
 
 		box-sizing: border-box;
 		gap: 0.5rem;
+
+		pointer-events: none;
 	}
 
 	.blackKeys {
