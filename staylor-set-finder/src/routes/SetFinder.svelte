@@ -11,5 +11,8 @@
 	.content {
 		width: 100%;
 		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
 </style>

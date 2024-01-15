@@ -53,4 +53,5 @@
 		border: none;
 		background: none;
 	}
+	/* TODO: make it mobile friendly with the width. */
 </style>
